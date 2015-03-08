@@ -1,0 +1,13 @@
+{
+    "name": "qafoogalaxy/foorge.runner",
+    "description": "Role handling the Run-stage of a Foorge Cluster deployment",
+    "license": "MIT",
+    "type": "ansible-role",
+    "require": {
+        "qafoogalaxy/installer": "@stable",
+        "qafoogalaxy/foorge.base": "@stable"
+        "qafoogalaxy/foorge.consul": "@stable",
+        "qafoogalaxy/foorge.nginx": ">=2.0.1"
+    }
+}
+
