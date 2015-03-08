@@ -1,0 +1,12 @@
+{
+    "services": [
+{% for process in runner_procfile if process.type == "fastcgi" %}
+        {
+            "id": "{{ foorge_app }}_{{ process.name }}",
+            "name": "{{ foorge_app }}",
+            "tags": ["{{ process.name }}"],
+            "port": {{ runner_fastcgi_port_start + loop.index0 }}
+        }{% if not loop.last %},{% endif %}
+{% endfor %}
+    ]
+}

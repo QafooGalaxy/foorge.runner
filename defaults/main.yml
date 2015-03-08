@@ -1,0 +1,5 @@
+---
+runner_fastcgi_port_start: 35000
+runner_fastcgi_listen: "{{ ansible_all_ipv4_addresses|ipaddr('private')|first|default('127.0.0.1') }}"
+runner_web_port_start: 36000
+runner_procfile: []

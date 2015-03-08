@@ -1,0 +1,20 @@
+# Deployment for {{ foorge_app }}
+# {{ ansible_managed }}
+
+{% for process in runner_procfile if process.type == "fastcgi" %}
+{% set port = runner_fastcgi_port_start + loop.index0 %}
+server {
+    listen {{ runner_fastcgi_listen }}:{{ port }};
+    server_name {{ process.name }}.{{ foorge_app }}.service.consul;
+
+    access_log  /var/log//{{ foorge_app }}/nginx/{{ process.name }}_access.log combined;
+    error_log   /var/log/{{ foorge_app }}/nginx/{{ process.name }}_error.log warn;
+
+    set $root "/var/www/{{ foorge_app }}/{{ process.document_root|default('') }}";
+    set $index "{{ process.index|default('index.php') }}";
+    set $pool "{{ process.pool|default(foorge_app) }}";
+
+    include /etc/nginx/includes.d/foorge_fastcgi_{{ process.language|default('php') }}.conf;
+}
+
+{% endfor %}

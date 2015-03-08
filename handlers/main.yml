@@ -1,0 +1,6 @@
+---
+- name: "Reload Supervisor"
+  command: supervisorctl reload
+
+- name: "Reload Nginx"
+  service: name=nginx state=reloaded

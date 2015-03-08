@@ -1,0 +1,40 @@
+---
+- name: "Install Cronjobs"
+  template: >
+    src=cron.j2
+    dest=/etc/cron.d/foorge_{{ foorge_app }}
+  when: '"worker" in {{ group_names }}'
+  with_items: runner_procfile
+
+- name: "Install Workers"
+  template: >
+    src=supervisor.j2
+    dest=/etc/supervisor/conf.d/foorge_{{ foorge_app }}.conf
+  with_items: runner_procfile
+  when: '"worker" in {{ group_names }}'
+  notify: "Reload Supervisor"
+
+- name: "Install self-contained Webservers"
+  template: >
+    src=supervisor_web.j2
+    dest=/etc/supervisor/conf.d/foorge_{{ foorge_app }}_web.conf
+  with_items: runner_procfile
+  when: '"web" in {{ group_names }}'
+  notify: "Reload Supervisor"
+
+- name: "Write Nginx FastCGI Hosts"
+  template: >
+    src=nginx.j2
+    dest=/etc/nginx/sites-enabled/foorge_{{ foorge_app }}.conf
+  when: '"web" in {{ group_names }}'
+  notify: "Reload Nginx"
+
+- name: "register consul services"
+  template: >
+      src=consul.j2
+      dest=/etc/consul.d/{{ foorge_app }}.json
+  register: runner_consul_services
+
+- name: "reload consul"
+  service: name=consul state=restarted
+  when: runner_consul_services|changed

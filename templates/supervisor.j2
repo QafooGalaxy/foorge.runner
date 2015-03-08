@@ -1,0 +1,15 @@
+# Deployment for {{ foorge_app }}
+{% for process in runner_procfile %}
+{% if process.type == 'worker' %}
+[program:{{ foorge_app }}_{{ process.name }}]
+command=envconsul -prefix=apps/{{ foorge_app }} -sanitize -upcase {{ process.command }}
+directory=/var/www/{{ foorge_app }}
+user={{ runner_user }}
+autostart=true
+autorestart=true
+stopsignal=QUIT
+stdout_logfile=/var/log/{{ foorge_app }}/worker/{{ process.name }}.stdout.log
+stderr_logfile=/var/log/{{ foorge_app }}/worker/{{ process.name }}.stderr.log
+
+{% endif %}
+{% endfor %}

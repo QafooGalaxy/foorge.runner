@@ -1,0 +1,7 @@
+# Deployment for {{ foorge_app }}
+# {{ ansible_managed }}
+{% for process in runner_procfile %}
+{% if process.type == 'cron' %}
+{{ process.minute|default('*') }} {{ process.hour|default('*') }} {{ process.day|default('*') }} {{ process.month|default('*') }} {{ process.weekday|default('*') }} {{ runner_user }} cd /var/www/{{ foorge_app }} && envconsul -prefix=apps/{{ foorge_app }} -sanitize -upcase {{ process.command|mandatory }} 2&1> /var/log/{{ foorge_app }}/cron/{{ process.name }}.log
+{% endif %}
+{% endfor %}
